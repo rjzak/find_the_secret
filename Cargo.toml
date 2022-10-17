@@ -1,0 +1,17 @@
+[patch.crates-io]
+hyper = { git = "https://github.com/rjzak/hyper", branch = "wasi_wip" }
+
+[package]
+name = "find_the_secret"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+anyhow = { version = "1", default-features = false }
+axum = { version = "^0.5.16", features = ["headers"], default-features = false }
+hyper = { git = "https://github.com/rjzak/hyper", branch = "wasi_wip", features = ["http1", "server"], default-features = false }
+tokio = { version = "^1.21.2", features = ["rt", "macros"], default-features = false }
+uuid = { version = "1.2", features = ["v4"], default-features = false }
+
+[dev-dependencies]
+tower = { version = "^0.4.11", features = ["util"], default-features = false }
