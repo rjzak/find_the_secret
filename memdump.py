@@ -3,6 +3,7 @@
 import os
 import re
 import sys
+import math
 
 
 def find_the_secret(pid: int):
@@ -13,6 +14,9 @@ def find_the_secret(pid: int):
         print("The PID value of {} is incorrect, exiting.".format(pid), file=sys.stderr)
         sys.exit(1)
 
+    mapping = [0] * 256
+    entropy = 0.0
+    size = 0
     with open(map_file, 'r') as map_f, open(mem_file, 'rb', 0) as mem_f:
         uuid_regex = re.compile(b'([0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12})', re.I)
         for line in map_f.readlines():
@@ -27,9 +31,17 @@ def find_the_secret(pid: int):
                     print("UUID found at memory range {}:{}:".format(hex(start), hex(end)))
                     for uuid in found:
                         print("\t{}".format(uuid.decode("utf-8")))
+                for c in chunk:
+                    mapping[c] += 1
+                size += len(chunk)
             except Exception:
                 print(hex(start), '-', hex(end), '[error,skipped]', file=sys.stderr)
                 continue
+        for b in mapping:
+            p = b / float(size)
+            if p > 0:
+                entropy += -p * math.log(p, 2.0)
+        print("Entropy: {:.2f}".format(entropy))
 
 
 if __name__ == '__main__':
